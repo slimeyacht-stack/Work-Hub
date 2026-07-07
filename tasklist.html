@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEEKLY MAINTENANCE // TRIFEXTA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0b09;
+    --panel: #171310;
+    --panel-2: #1e1914;
+    --line: #2c251d;
+    --rust: #b5502a;
+    --rust-hot: #d96a3b;
+    --cream: #e8ddc8;
+    --dim: #6f6353;
+    --clear: #7a9d54;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 12px 64px;
+  }
+  .shell { width: 100%; max-width: 980px; }
+
+  /* ---------- header ---------- */
+  header {
+    border: 1px solid var(--line);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.35) 3px 4px),
+      linear-gradient(180deg, var(--panel-2), var(--panel));
+    padding: 20px 20px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: "";
+    position: absolute; top: 0; right: 0;
+    border-top: 14px solid var(--rust);
+    border-left: 14px solid transparent;
+  }
+  h1 {
+    font-family: 'VT323', monospace;
+    font-size: clamp(28px, 6vw, 46px);
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 0 0 12px rgba(217,106,59,.25);
+  }
+  h1 span { color: var(--rust-hot); }
+  .sub {
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    align-items: center;
+  }
+  .meta label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta input {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 8px;
+    outline: none;
+    width: 150px;
+  }
+  .meta input:focus { border-color: var(--rust); }
+  .counter {
+    margin-left: auto;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--rust-hot);
+    white-space: nowrap;
+  }
+
+  /* ---------- toolbar ---------- */
+  .bar { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .bar button {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--dim);
+    font: inherit;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .bar button:hover { border-color: var(--rust); color: var(--rust-hot); }
+  button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--rust-hot);
+    outline-offset: 1px;
+  }
+
+  /* ---------- grid ---------- */
+  .wrap {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; }
+  thead th {
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--rust-hot);
+    padding: 10px 6px;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+  }
+  thead th.taskcol { text-align: left; padding-left: 12px; color: var(--dim); }
+  tbody tr { border-bottom: 1px solid var(--line); background: var(--panel); }
+  tbody tr:nth-child(even) { background: #14100d; }
+  tbody tr.full td.taskname { color: var(--clear); }
+  tbody tr.full td.taskname::after {
+    content: " [CLEARED]";
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  td.taskname {
+    font-size: 12.5px;
+    padding: 9px 10px 9px 12px;
+    line-height: 1.35;
+    min-width: 250px;
+    position: sticky;
+    left: 0;
+    background: inherit;
+    border-right: 1px solid var(--line);
+  }
+  td.day { text-align: center; padding: 4px; width: 52px; }
+  .box {
+    width: 22px; height: 22px;
+    border: 1px solid var(--dim);
+    background: var(--bg);
+    cursor: pointer;
+    display: inline-grid;
+    place-items: center;
+    color: var(--clear);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+  }
+  .box:hover { border-color: var(--rust-hot); }
+  .box.on { border-color: var(--clear); box-shadow: 0 0 6px rgba(122,157,84,.3); }
+  td.today-col { background: rgba(181,80,42,.08); }
+
+  footer {
+    margin-top: 20px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <h1>WEEKLY<span>_</span>MAINTENANCE</h1>
+    <div class="sub">Trifexta // Duty Roster</div>
+    <div class="meta">
+      <label>Week of <input type="text" id="weekOf" placeholder="MM/DD"></label>
+      <label>Store <input type="text" id="store" placeholder="#"></label>
+      <div class="counter" id="counter">0 / 0 CHECKS</div>
+    </div>
+  </header>
+
+  <div class="bar">
+    <button id="resetWeek">Reset Week</button>
+  </div>
+
+  <div class="wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="taskcol">Task</th>
+          <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th>
+          <th>Fri</th><th>Sat</th><th>Sun</th>
+        </tr>
+      </thead>
+      <tbody id="grid"></tbody>
+    </table>
+  </div>
+
+  <footer>bxbys / trifexta &mdash; weekly maintenance v2</footer>
+</div>
+
+<script>
+  const TASKS = [
+    "Clean interior and exterior drive thru windows and ledges",
+    "Sweep/mop walk in cooler and freezer",
+    "Sanitize bulk coke tanks as needed",
+    "Use beverage drain cleaner on all soda/mccafe/frappe drains",
+    "Pull front and rear fryer / clean sides and behind them",
+    "Pull grills / clean sides and behind them",
+    "Pull small refrigerators/freezers / clean behind them",
+    "Pull shake/frappe/mccafe machines and clean behind them",
+    "Clean floor drains with degreaser / add beverage drain cleaner",
+    "Pull fry hopper/small refrigerators/oven along back wall",
+    "Wipe down walls in back room / throughout the kitchen area",
+    "Wash mop heads as needed",
+    "Clean and degrease exhaust hood filters",
+    "Wipe down and polish all stainless",
+    "Clean baseboards in lobby",
+    "Check for burned out light bulbs",
+    "Wipe down power cords and monitors",
+    "Clean light covers as necessary",
+    "Clean air vents and egg crates",
+    "Replace bad ceiling tiles",
+    "Clean interior trash can liners",
+    "Deep clean walk in cooler and freezer",
+    "Clean all interior refrigeration coils",
+    "Replace hvac air filters",
+    "Spray down roof hvac coils",
+    "Scrub and spray down sidewalks and drive thru pads",
+    "Check roof exhaust fan drains, clean grease out as needed"
+  ];
+  const DAYS = 7;
+  // checks[taskIndex] = array of 7 booleans
+  let checks = TASKS.map(() => Array(DAYS).fill(false));
+
+  const grid = document.getElementById('grid');
+  const counter = document.getElementById('counter');
+  // JS getDay(): 0=Sun..6=Sat -> our columns 0=Mon..6=Sun
+  const todayCol = (new Date().getDay() + 6) % 7;
+
+  function build() {
+    grid.innerHTML = '';
+    TASKS.forEach((name, ti) => {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.className = 'taskname';
+      td.textContent = name;
+      tr.appendChild(td);
+      for (let d = 0; d < DAYS; d++) {
+        const cell = document.createElement('td');
+        cell.className = 'day' + (d === todayCol ? ' today-col' : '');
+        const b = document.createElement('button');
+        b.className = 'box';
+        b.setAttribute('aria-label', name + ' - day ' + (d + 1));
+        b.onclick = () => {
+          checks[ti][d] = !checks[ti][d];
+          paint(b, ti, d, tr);
+          count();
+        };
+        cell.appendChild(b);
+        tr.appendChild(cell);
+      }
+      grid.appendChild(tr);
+    });
+    count();
+  }
+
+  function paint(btn, ti, d, tr) {
+    const on = checks[ti][d];
+    btn.classList.toggle('on', on);
+    btn.textContent = on ? 'x' : '';
+    tr.classList.toggle('full', checks[ti].every(Boolean));
+  }
+
+  function count() {
+    const done = checks.flat().filter(Boolean).length;
+    counter.textContent = done + ' / ' + (TASKS.length * DAYS) + ' CHECKS';
+  }
+
+  document.getElementById('resetWeek').onclick = () => {
+    if (!confirm('Clear all checks for the week?')) return;
+    checks = TASKS.map(() => Array(DAYS).fill(false));
+    build();
+  };
+
+  build();
+</script>
+</body>
+</html>
